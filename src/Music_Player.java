@@ -1,3 +1,5 @@
+import GUI.MusicBoard;
+
 import javax.swing.*;
 
 public class Music_Player{

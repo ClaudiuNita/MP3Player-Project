@@ -22,13 +22,15 @@ public class PlayerControl {
         playerThread = new Thread(runnablePlayer);
     }
 
-    public void stopPlayer(){
+    public void stopPlayer() {
         if (playerThread.isAlive()) {
             player.close();
+            this.musicPath = "";
+            playerThread = new Thread(runnablePlayer);
         }
     }
 
-    public void playSong (String musicPath){
+    public void playSong(String musicPath) {
 
         this.musicPath = musicPath;
 
@@ -50,10 +52,7 @@ public class PlayerControl {
                     bufferedInputStream = new BufferedInputStream(fileInputStream);
                     player = new Player(bufferedInputStream);
                     player.play();
-                } catch (Exception e){
-
-                }
+                } catch (Exception e) {}
             }
     };
-
 }

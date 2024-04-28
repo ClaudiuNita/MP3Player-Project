@@ -4,65 +4,70 @@ import java.util.*;
 
 public class PlayList {
 
-    private LinkedList<Song> list;
-    private ListIterator<Song> listIterator;
+    private LinkedList<Song> songList;
+    private ListIterator<Song> songListIterator;
     private Scanner scanner;
-    private PlayerControl controale;
+    private PlayerControl playerControl;
 
     private boolean quit = false,
-                    goingForward = true;
+                    goingForward = true,
+                    isFirstPlay = true;
     private int     option, index;
 
     public PlayList(){
 
-        list = new LinkedList<>();
+        songList = new LinkedList<>();
 
-        Song song1 = new Song("C:\\Users\\Claudiu\\Desktop\\Programare\\Java\\.PROJECTS\\Music_Player\\Playlist\\Harry Styles - Watermelon Sugar (Official Audio).mp3","Harry Styles - Watermelon Sugar", "3.08");
-        Song song2 = new Song("C:\\Users\\Claudiu\\Desktop\\Programare\\Java\\.PROJECTS\\Music_Player\\Playlist\\Swedish House Mafia and The Weeknd - Moth To A Flame (Official Video).mp3", "The Weeknd - Take My Breath", "3.44");
-        Song song3 = new Song("C:\\Users\\Claudiu\\Desktop\\Programare\\Java\\.PROJECTS\\Music_Player\\Playlist\\The Weeknd - Take My Breath (Official Music Video).mp3", "Swedish House Mafia and The Weeknd - Moth To A Flame", "4.13");
+        Song song1 = new Song("D:\\Programare\\Java\\.PROJECTS\\Music_Player\\Playlist\\Harry Styles - Watermelon Sugar (Official Audio).mp3","Harry Styles - Watermelon Sugar", "2.53");
+        Song song2 = new Song("D:\\Programare\\Java\\.PROJECTS\\Music_Player\\Playlist\\Swedish House Mafia and The Weeknd - Moth To A Flame (Official Video).mp3", "Swedish House Mafia and The Weeknd - Moth To A Flame", "4.13");
+        Song song3 = new Song("D:\\Programare\\Java\\.PROJECTS\\Music_Player\\Playlist\\The Weeknd - Take My Breath (Official Music Video).mp3", "The Weeknd - Take My Breath", "3.44");
 
-        list.add(song1);
-        list.add(song2);
-        list.add(song3);
-        listIterator = list.listIterator();
+        songList.add(song1);
+        songList.add(song2);
+        songList.add(song3);
+        songListIterator = songList.listIterator();
 
-        controale = new PlayerControl();
+        playerControl = new PlayerControl();
         scanner = new Scanner(System.in);
     }
 
     public void menu() {
 
-        printMeniu();
+        printMenu();
 
         while (!quit) {
 
-            System.out.print("Choose option:");
+            System.out.print("Choose option: ");
             option = scanner.nextInt();
             System.out.println();
 
             switch (option){
 
-                case 1:
+                case 0:
 
-                    quit = true;
-                    controale.stopPlayer();
-                    scanner.close();
+                    quit();
                     break;
+                case 1:
+                    //play/repeta
+
+                    repeat();
+                    break;
+
                 case 2:
+
+                    stopMusic();
+                    break;
+                case 3:
                     //inainte
 
                     goingForwards();
                     break;
-                case 3:
+                case 4:
                     //inapoi
 
                     goingBackwards();
                     break;
-                case 4:
-                    //repeta
 
-                    repeta();
-                    break;
                 case 5:
                     //afiseaza lista
 
@@ -72,104 +77,133 @@ public class PlayList {
                 case 6:
                     //afiseaza meniu
 
-                    printMeniu();
+                    printMenu();
             }
         }
-
     }
 
-    public Song getSong(int i){
-        return list.get(i);
+
+    public void printMenu() {
+
+        System.out.println("Options:");
+        System.out.println("1. Play/Replay \n2. Stop \n3. Skip forwards" +
+                           "\n4. Skip backwards \n5. Songs \n6. Menu \n0. Quit");
+        System.out.println("---------------------------");
     }
+
+    public void addSongToPlaylist(Song song) {
+
+        songList.add(song);
+        songListIterator = songList.listIterator(index);
+    }
+
+    public void stopMusic() {
+        System.out.println("Stopping the song!");
+        playerControl.stopPlayer();
+    }
+
+    public void quit() {
+
+        stopMusic();
+        scanner.close();
+        quit = true;
+    }
+
+    public Song getSong(int i) { return songList.get(i); }
 
     public int getListSize(){
-        return list.size();
+        return songList.size();
     }
 
-    public String printPlaylist(){
+    public String printPlaylist() {
 
         String playList = "";
 
-        for (int i = 0; i < list.size(); i++){
-            playList += (i + 1 + "." + list.get(i).getTitle() + "\n");
+        for (int i = 0; i < songList.size(); i++){
+            playList += (i + 1 + ". " + songList.get(i).getTitle() + "\n");
         }
         return playList;
     }
 
-    public void printMeniu(){
+    public void goingBackwards() {
 
-        System.out.println("Options:");
-        System.out.println("1. Quit \n2. Skip forward \n3. Skip backwards" +
-                "\n4. Replay \n5. Songs \n6. Meniu");
-        System.out.println("---------------------------");
-    }
-
-    public void goingBackwards(){
-        if (goingForward){
-            if (listIterator.hasPrevious()){
-                listIterator.previous();
+        if (goingForward) {
+            if (songListIterator.hasPrevious()) {
+                songListIterator.previous();
             }
             goingForward = false;
         }
 
-        if (listIterator.hasPrevious()){
+        if (songListIterator.hasPrevious()) {
 
-            index = listIterator.previousIndex();
-            System.out.println("Now playing: " + listIterator.previous().getTitle());
+            index = songListIterator.previousIndex();
+            System.out.println("Now playing: " + songListIterator.previous().getTitle());
 
-            controale.playSong(list.get(index).getPath());
+            playerControl.playSong(songList.get(index).getPath());
 
         } else {
             System.out.println("Start of the list!");
+            System.out.println("Press 6 to show the menu!");
             goingForward = true;
         }
     }
 
-    public void goingForwards(){
-        if (!goingForward){
-            if (listIterator.hasNext()){
-                listIterator.next();
+    public void goingForwards() {
+
+        if (!goingForward) {
+            if (songListIterator.hasNext()) {
+                songListIterator.next();
             }
             goingForward = true;
         }
 
-        if (listIterator.hasNext()){
+        if (songListIterator.hasNext()) {
 
-            index = listIterator.nextIndex();
-            System.out.println("Now playing: " + listIterator.next().getTitle());
+            index = songListIterator.nextIndex();
+            System.out.println("Now playing: " + songListIterator.next().getTitle());
 
-            controale.playSong(list.get(index).getPath());
+            playerControl.playSong(songList.get(index).getPath());
 
         } else {
             System.out.println("End of the list!");
+            System.out.println("Press 6 to show the menu!");
             goingForward = false;
         }
+
+        isFirstPlay = false;
     }
 
-    public void repeta(){
+    public void repeat() {
 
-        if (goingForward){
-            if (listIterator.hasPrevious()){
-
-                index = listIterator.previousIndex();
-                System.out.println("Replaying the song: " + listIterator.previous().getTitle());
-
-                controale.playSong(list.get(index).getPath());
-
-            }
-            goingForward = false;
+        if (isFirstPlay) {
+            goingForwards();
+            isFirstPlay = false;
         } else {
-            if (listIterator.hasNext()){
+            if (goingForward) {
+                if (songListIterator.hasPrevious()) {
 
-                index = listIterator.nextIndex();
-                System.out.println("Replaying the song: " + listIterator.next().getTitle());
+                    index = songListIterator.previousIndex();
+                    System.out.println("Replaying the song: " + songListIterator.previous().getTitle());
 
-                controale.playSong(list.get(index).getPath());
+                    playerControl.playSong(songList.get(index).getPath());
 
+                }
+                goingForward = false;
+            } else {
+                if (songListIterator.hasNext()) {
+
+                    index = songListIterator.nextIndex();
+                    System.out.println("Replaying the song: " + songListIterator.next().getTitle());
+
+                    playerControl.playSong(songList.get(index).getPath());
+
+                }
+                goingForward = true;
             }
-            goingForward = true;
         }
-
     }
 
+    public int getCurrentSong() {
+        return index;
+    }
 }

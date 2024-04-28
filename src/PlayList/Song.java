@@ -12,15 +12,9 @@ public class Song {
         this.duration = duration;
     }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getTitle() { return title; }
 
-    public String getDuration() {
-        return duration;
-    }
+    public String getDuration() { return duration; }
 
-    public String getPath() {
-        return path;
-    }
+    public String getPath() { return path; }
 }
